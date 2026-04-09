@@ -43,7 +43,12 @@ export default function TransitionsPage() {
 	const [contexts, setContexts] = useState<Context[]>([]);
 	const [loading, setLoading] = useState(false);
 
-	const { register, handleSubmit, reset, setValue } = useForm<FormData>();
+	const { register, handleSubmit, reset, setValue } = useForm<FormData>({
+		defaultValues: {
+			name: '',
+			actor: 'either',
+		}
+	});
 
 	async function fetchAll() {
 		const [tRes, pRes] = await Promise.all([
@@ -200,7 +205,6 @@ export default function TransitionsPage() {
 							{...register('fromId', { required: true })}
 							style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '14px' }}
 						>
-							<option value="">Select position</option>
 							{positions.map(p => (
 								<option key={p.id} value={p.id}>{p.name} ({p.perspective})</option>
 							))}
@@ -213,7 +217,6 @@ export default function TransitionsPage() {
 							{...register('toId', { required: true })}
 							style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '14px' }}
 						>
-							<option value="">Select position</option>
 							{positions.map(p => (
 								<option key={p.id} value={p.id}>{p.name} ({p.perspective})</option>
 							))}
@@ -226,7 +229,6 @@ export default function TransitionsPage() {
 							{...register('actor', { required: true })}
 							style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '14px' }}
 						>
-							<option value="">Select actor</option>
 							{ACTORS.map(a => (
 								<option key={a} value={a}>{a}</option>
 							))}

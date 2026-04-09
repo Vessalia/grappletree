@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 
 type Position = {
 	id: string;
@@ -18,12 +18,29 @@ type FormData = {
 
 const PERSPECTIVES = ['top', 'bottom', 'attacker', 'defender', 'neutral'];
 
+const OPPOSING: Record<string, string> = {
+	top: 'bottom',
+	bottom: 'top',
+	attacker: 'defender',
+	defender: 'attacker',
+};
+
 export default function PositionsPage() {
 	const [positions, setPositions] = useState<Position[]>([]);
 	const [selected, setSelected] = useState<Position | null>(null);
 	const [loading, setLoading] = useState(false);
+	const [createReciprocal, setCreateReciprocal] = useState(false);
 
-	const { register, handleSubmit, reset, setValue } = useForm<FormData>();
+	const { register, handleSubmit, reset, setValue, control } = useForm<FormData>({
+		defaultValues: {
+			name: '',
+			perspective: 'neutral',
+			notes: '',
+		}
+	});
+
+	const perspective = useWatch({ control, name: 'perspective' });
+	const isNeutral = perspective === 'neutral' || !OPPOSING[perspective];
 
 	async function fetchPositions() {
 		const res = await fetch('/api/positions');
@@ -35,6 +52,10 @@ export default function PositionsPage() {
 		fetchPositions();
 	}, []);
 
+	useEffect(() => {
+		if (isNeutral) setCreateReciprocal(false);
+	}, [isNeutral]);
+
 	function selectPosition(position: Position) {
 		setSelected(position);
 		setValue('name', position.name);
@@ -44,6 +65,7 @@ export default function PositionsPage() {
 
 	function clearForm() {
 		setSelected(null);
+		setCreateReciprocal(false);
 		reset();
 	}
 
@@ -62,6 +84,17 @@ export default function PositionsPage() {
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(data),
 				});
+				if (createReciprocal && OPPOSING[data.perspective]) {
+					await fetch('/api/positions', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({
+							name: data.name,
+							perspective: OPPOSING[data.perspective],
+							notes: data.notes,
+						}),
+					});
+				}
 			}
 			await fetchPositions();
 			clearForm();
@@ -151,9 +184,8 @@ export default function PositionsPage() {
 							{...register('perspective', { required: true })}
 							style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '14px' }}
 						>
-							<option value="">Select perspective</option>
 							{PERSPECTIVES.map(p => (
-							<option key={p} value={p}>{p}</option>
+								<option key={p} value={p}>{p}</option>
 							))}
 						</select>
 					</div>
@@ -167,6 +199,25 @@ export default function PositionsPage() {
 							style={{ padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: '6px', fontSize: '14px', resize: 'vertical' }}
 						/>
 					</div>
+
+					{!selected && (
+					<label style={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: '8px',
+						fontSize: '14px',
+						color: isNeutral ? '#9ca3af' : 'inherit',
+						cursor: isNeutral ? 'not-allowed' : 'pointer',
+					}}>
+						<input
+							type="checkbox"
+							checked={createReciprocal}
+							disabled={isNeutral}
+							onChange={e => setCreateReciprocal(e.target.checked)}
+						/>
+						Also create {perspective && OPPOSING[perspective] ? `"${OPPOSING[perspective]}" version` : 'opposing position'}
+					</label>
+					)}
 
 					<button
 						type="submit"
