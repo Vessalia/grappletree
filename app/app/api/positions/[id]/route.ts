@@ -3,8 +3,9 @@ import driver from '@/lib/neo4j';
 
 export async function PATCH(
 	request: Request,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
+	const { id } = await params;
 	const { name, perspective, notes } = await request.json();
 	const session = driver.session();
 	try {
@@ -12,7 +13,7 @@ export async function PATCH(
 			`MATCH (p:Position {id: $id})
 			SET p.name = $name, p.perspective = $perspective, p.notes = $notes
 			RETURN p`,
-			{ id: params.id, name, perspective, notes: notes ?? '' }
+			{ id, name, perspective, notes: notes ?? '' }
 		);
 		const position = result.records[0].get('p').properties;
 		return NextResponse.json(position);
@@ -23,13 +24,14 @@ export async function PATCH(
 
 export async function DELETE(
 	request: Request,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
+	const { id } = await params;
 	const session = driver.session();
 	try {
 		await session.run(
 			'MATCH (p:Position {id: $id}) DETACH DELETE p',
-			{ id: params.id }
+			{ id }
 		);
 		return NextResponse.json({ success: true });
 	} finally {
