@@ -1,33 +1,47 @@
-import Link from 'next/link';
+'use client';
 
-export default function AdminLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+import './admin.css';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+	const pathname = usePathname();
+
+	const navItems = [
+		{ href: '/admin/positions', label: 'Positions' },
+		{ href: '/admin/transitions', label: 'Transitions' },
+		{ href: '/admin/graph', label: 'Graph' },
+	];
+
+	const currentPage = navItems.find(i => pathname.startsWith(i.href))?.label ?? 'Admin';
+
 	return (
-		<div style={{ display: 'flex', minHeight: '100vh' }}>
-		<nav style={{
-			width: '220px',
-			borderRight: '1px solid #e5e7eb',
-			padding: '24px 16px',
-			display: 'flex',
-			flexDirection: 'column',
-			gap: '8px',
-		}}>
-		<div style={{ fontWeight: 600, fontSize: '18px', marginBottom: '24px' }}>
-		GrappleTree
+		<div className="admin-shell">
+			<aside className="sidebar">
+				<div className="sidebar-logo">Grapple Tree</div>
+				<div className="sidebar-section">
+					<div className="sidebar-label">Data</div>
+					{navItems.map(item => (
+					<Link
+						key={item.href}
+						href={item.href}
+						className={`sidebar-link ${pathname.startsWith(item.href) ? 'active' : ''}`}
+					>
+						{item.label}
+					</Link>
+					))}
+				</div>
+			</aside>
+			<div className="admin-main">
+				<div className="admin-topbar">
+					<span className="admin-topbar-title">
+						admin / <span>{currentPage.toLowerCase()}</span>
+					</span>
+				</div>
+				<div className="admin-content">
+					{children}
+				</div>
+			</div>
 		</div>
-			<Link href="/admin/positions" style={{ padding: '8px 12px', borderRadius: '6px', textDecoration: 'none', color: 'inherit' }}>
-				Positions
-			</Link>
-			<Link href="/admin/transitions" style={{ padding: '8px 12px', borderRadius: '6px', textDecoration: 'none', color: 'inherit' }}>
-				Transitions
-			</Link>
-		</nav>
-		<main style={{ flex: 1, padding: '32px' }}>
-			{children}
-		</main>
-	</div>
 	);
 }

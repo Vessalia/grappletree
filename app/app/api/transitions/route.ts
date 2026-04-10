@@ -16,7 +16,9 @@ export async function GET() {
 			...r.get('t').properties,
 			fromId: r.get('fromId'),
 			toId: r.get('toId'),
-			contexts: r.get('contexts'),
+			contexts: r.get('contexts').filter(
+				(c: any) => c.discipline != null && c.effectiveness != null
+			),
 		}));
 		return NextResponse.json(transitions);
 	} finally {

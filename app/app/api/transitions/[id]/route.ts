@@ -46,20 +46,21 @@ export async function PATCH(
 
 		if (contexts) {
 			await session.run(
-			'MATCH (t:Transition {id: $id})-[r:HAS_CONTEXT]->() DELETE r',
-			{ id }
+				'MATCH (t:Transition {id: $id})-[r:HAS_CONTEXT]->() DELETE r',
+				{ id }
 			);
 			for (const ctx of contexts) {
-			await session.run(
-				`MATCH (t:Transition {id: $transitionId})
-				MATCH (d:DisciplineContext {discipline: $discipline, effectiveness: $effectiveness})
-				MERGE (t)-[:HAS_CONTEXT]->(d)`,
-				{
-				transitionId: id,
-				discipline: ctx.discipline,
-				effectiveness: ctx.effectiveness,
-				}
-			);
+				if (!ctx.discipline || !ctx.effectiveness) continue;
+				await session.run(
+					`MATCH (t:Transition {id: $transitionId})
+					MATCH (d:DisciplineContext {discipline: $discipline, effectiveness: $effectiveness})
+					MERGE (t)-[:HAS_CONTEXT]->(d)`,
+					{
+						transitionId: id,
+						discipline: ctx.discipline,
+						effectiveness: ctx.effectiveness,
+					}
+				);
 			}
 		}
 
