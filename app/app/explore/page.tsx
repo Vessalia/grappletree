@@ -14,7 +14,7 @@ export default function ExplorePage() {
 		<div className="explore-shell">
 
 			<div className="explore-toolbar">
-				<div className="explore-toolbar-logo">Grapple Tree</div>
+				<div className="explore-toolbar-logo">GRAPPLE TREE</div>
 
 				<div className="explore-search">
 					<input

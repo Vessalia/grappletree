@@ -5,7 +5,7 @@ export default function LandingPage() {
 	return (
 		<div className="landing-shell">
 			<div className="landing-content">
-				<div className="landing-logo">GRAPPLETREE</div>
+				<div className="landing-logo">GRAPPLE TREE</div>
 				<p className="landing-tagline">A knowledge graph for grapplers</p>
 				<div className="landing-cards">
 					<Link href="/explore" className="landing-card">

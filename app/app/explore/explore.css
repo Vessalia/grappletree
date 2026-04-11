@@ -12,7 +12,11 @@
 	--ex-panel-width: 340px;
 }
 
-body {
+.explore-shell {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	overflow: hidden;
 	background: var(--ex-bg);
 	color: var(--ex-text-primary);
 	font-family: 'IBM Plex Sans', sans-serif;

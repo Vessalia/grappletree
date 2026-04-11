@@ -18,7 +18,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 	return (
 		<div className="admin-shell">
 			<aside className="sidebar">
-				<div className="sidebar-logo">Grapple Tree</div>
+				<div className="sidebar-logo">GRAPPLE TREE</div>
 				<div className="sidebar-section">
 					<div className="sidebar-label">Data</div>
 					{navItems.map(item => (

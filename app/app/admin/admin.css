@@ -16,7 +16,9 @@
 	--success: #22c55e;
 }
 
-body {
+.admin-shell {
+	display: flex;
+	min-height: 100vh;
 	background: var(--bg-base);
 	color: var(--text-primary);
 	font-family: 'IBM Plex Sans', sans-serif;
