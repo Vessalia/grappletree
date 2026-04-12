@@ -12,10 +12,8 @@ export default function ExplorePage() {
 
 	return (
 		<div className="explore-shell">
-
 			<div className="explore-toolbar">
 				<div className="explore-toolbar-logo">GRAPPLE TREE</div>
-
 				<div className="explore-search">
 					<input
 						className="explore-search-input"
@@ -50,6 +48,7 @@ export default function ExplorePage() {
 					>
 						⚙
 					</button>
+
 					<button
 						className={`explore-icon-btn ${explore.panelOpen ? 'active' : ''}`}
 						onClick={explore.togglePanel}
@@ -88,7 +87,6 @@ export default function ExplorePage() {
 					onClose={explore.toggleSettings}
 				/>
 			)}
-
 		</div>
 	);
 }
