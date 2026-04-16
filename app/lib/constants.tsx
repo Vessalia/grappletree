@@ -15,12 +15,14 @@ export const OPPOSING_PERSPECTIVES: Record<string, string> = {
 
 export const PERSPECTIVES = Object.keys(PERSPECTIVE_COLORS);
 
-export const DISCIPLINES = ['mma', 'bjj', 'wrestling', 'judo'];
-export const DISCIPLINE_EFFECTIVENESS_LEVELS = ['core', 'effective', 'situational', 'ineffective'];
-
 export const DISCIPLINE_COLORS: Record<string, string> = {
 	bjj: '#8b5cf6',
 	mma: '#ef4444',
 	wrestling: '#f59e0b',
 	judo: '#0aac0a'
 };
+
+export const DISCIPLINES = Object.keys(DISCIPLINE_COLORS);
+export const DISCIPLINE_EFFECTIVENESS_LEVELS = ['core', 'effective', 'situational', 'ineffective'];
+
+export const ACTORS = ['attacker', 'defender', 'either'];

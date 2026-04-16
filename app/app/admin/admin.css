@@ -246,6 +246,11 @@
 	border-color: var(--border);
 }
 
+.btn-ghost:disabled {
+	opacity: 0.5; 
+	cursor: not-allowed;
+}
+
 .btn-ghost:hover {
 	color: var(--text-primary);
 	border-color: var(--border-bright);

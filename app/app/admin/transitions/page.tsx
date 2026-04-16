@@ -3,10 +3,7 @@
 import { useState } from 'react';
 import { useTransitions, Transition, Position, Context } from './hooks/useTransitions';
 import { useTransitionForm } from './hooks/useTransitionForm';
-
-const ACTORS = ['attacker', 'defender', 'either'];
-const DISCIPLINES = ['bjj', 'mma', 'wrestling'];
-const EFFECTIVENESS = ['core', 'effective', 'situational', 'ineffective'];
+import { ACTORS, DISCIPLINES, DISCIPLINE_EFFECTIVENESS_LEVELS } from '@/lib/constants';
 
 type TableProps = {
 	transitions: Transition[];
@@ -74,6 +71,7 @@ type FormProps = {
 	register: any;
 	handleSubmit: any;
 	submit: any;
+	allDisciplinesUsed: boolean;
 	addContext: () => void;
 	removeContext: (i: number) => void;
 	updateContext: (i: number, field: keyof Context, value: string) => void;
@@ -82,7 +80,7 @@ type FormProps = {
 
 function TransitionForm({
 	selected, positions, contexts, loading,
-	register, handleSubmit, submit,
+	register, handleSubmit, submit, allDisciplinesUsed,
 	addContext, removeContext, updateContext, onCancel,
 }: FormProps) {
 	return (
@@ -132,7 +130,14 @@ function TransitionForm({
 				<div className="form-section">
 					<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
 						<label className="form-label" style={{ margin: 0 }}>Discipline contexts</label>
-						<button type="button" className="btn btn-ghost" onClick={addContext}>+ add</button>
+						<button
+							type="button"
+							className="btn btn-ghost"
+							onClick={addContext}
+							disabled={allDisciplinesUsed}
+						>
+							+ add
+						</button>
 					</div>
 
 					{contexts.map((ctx, i) => (
@@ -150,7 +155,7 @@ function TransitionForm({
 								value={ctx.effectiveness}
 								onChange={e => updateContext(i, 'effectiveness', e.target.value)}
 							>
-								{EFFECTIVENESS.map(e => <option key={e} value={e}>{e}</option>)}
+								{DISCIPLINE_EFFECTIVENESS_LEVELS.map(e => <option key={e} value={e}>{e}</option>)}
 							</select>
 
 							<button type="button" className="btn btn-danger" onClick={() => removeContext(i)}>×</button>
@@ -173,7 +178,7 @@ function TransitionForm({
 
 export default function TransitionsPage() {
 	const { transitions, positions, fetchAll, deleteTransition } = useTransitions();
-	const { register, handleSubmit, setValue, reset, contexts, addContext, removeContext, updateContext, loading, submit } = useTransitionForm(fetchAll);
+	const { register, handleSubmit, setValue, reset, contexts, addContext, removeContext, updateContext, loading, submit, allDisciplinesUsed } = useTransitionForm(fetchAll);
 	const [selected, setSelected] = useState<Transition | null>(null);
 
 	function positionLabel(id: string) {
@@ -212,6 +217,7 @@ export default function TransitionsPage() {
 				register={register}
 				handleSubmit={handleSubmit}
 				submit={submit}
+				allDisciplinesUsed={allDisciplinesUsed}
 				addContext={addContext}
 				removeContext={removeContext}
 				updateContext={updateContext}
