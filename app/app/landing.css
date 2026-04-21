@@ -61,7 +61,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	transition: all 0.15s;
+	technique: all 0.15s;
 	cursor: pointer;
 	color: #ff8181;
 }
@@ -87,5 +87,5 @@
 .landing-card-arrow {
 	font-size: 16px;
 	margin-top: 8px;
-	transition: color 0.15s;
+	technique: color 0.15s;
 }

@@ -15,7 +15,7 @@ export function usePositions() {
 	}
 
 	async function deletePosition(id: string) {
-		if (!confirm('Delete this position? All connected transitions will also be deleted.')) {
+		if (!confirm('Delete this position? All connected techniques will also be deleted.')) {
 			return;
 		}
 		await fetch(`/api/positions/${id}`, { method: 'DELETE' });

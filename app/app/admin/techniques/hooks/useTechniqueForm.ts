@@ -15,11 +15,11 @@ type FormData = {
 	notes: string;
 };
 
-type Transition = {
+type Technique = {
 	id: string;
 };
 
-export function useTransitionForm(fetchAll: () => Promise<void>) {
+export function useTechniqueForm(fetchAll: () => Promise<void>) {
 	const [loading, setLoading] = useState(false);
 	const [contexts, setContexts] = useState<Context[]>([]);
 
@@ -66,17 +66,17 @@ export function useTransitionForm(fetchAll: () => Promise<void>) {
 		);
 	}
 
-	async function submit(data: FormData, selected: Transition | null) {
+	async function submit(data: FormData, selected: Technique | null) {
 		setLoading(true);
 		try {
 			if (selected) {
-				await fetch(`/api/transitions/${selected.id}`, {
+				await fetch(`/api/techniques/${selected.id}`, {
 					method: 'PATCH',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ ...data, contexts })
 				});
 			} else {
-				await fetch('/api/transitions', {
+				await fetch('/api/techniques', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ ...data, contexts })

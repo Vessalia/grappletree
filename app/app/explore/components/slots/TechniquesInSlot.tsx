@@ -1,21 +1,21 @@
 import { SlotProps } from './index';
 import { PERSPECTIVE_COLORS } from '@/lib/constants';
 
-export default function TransitionsOutSlot({ transitions }: SlotProps) {
-	const out = transitions.filter(t => t.direction === 'out');
-	if (out.length === 0) return <div className="explore-empty">none recorded</div>;
+export default function TechniquesInSlot({ techniques }: SlotProps) {
+	const inbound = techniques.filter(t => t.direction === 'in');
+	if (inbound.length === 0) return <div className="explore-empty">none recorded</div>;
 
 	return (
 		<div>
-			{out.map(t => (
-				<div key={t.id} className="explore-transition-item">
-					<div className="explore-transition-name">{t.name}</div>
-					<div className="explore-transition-meta">
+			{inbound.map(t => (
+				<div key={t.id} className="explore-technique-item">
+					<div className="explore-technique-name">{t.name}</div>
+					<div className="explore-technique-meta">
 						<span
-							className="explore-transition-position"
+							className="explore-technique-position"
 							style={{ color: PERSPECTIVE_COLORS[t.relatedPerspective] ?? '#888' }}
 						>
-							→ {t.relatedName}
+							← {t.relatedName}
 						</span>
 						<span className="explore-context-badge">{t.actor}</span>
 						{t.contexts.map((ctx: any, i: number) => (

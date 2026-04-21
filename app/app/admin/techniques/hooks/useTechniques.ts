@@ -11,7 +11,7 @@ export type Context = {
 	effectiveness: string;
 };
 
-export type Transition = {
+export type Technique = {
 	id: string;
 	name: string;
 	actor: string;
@@ -21,13 +21,13 @@ export type Transition = {
 	contexts: Context[];
 };
 
-export function useTransitions() {
-	const [transitions, setTransitions] = useState<Transition[]>([]);
+export function useTechniques() {
+	const [techniques, setTechniques] = useState<Technique[]>([]);
 	const [positions, setPositions] = useState<Position[]>([]);
 
 	async function fetchAll() {
 		const [tRes, pRes] = await Promise.all([
-			fetch('/api/transitions'),
+			fetch('/api/techniques'),
 			fetch('/api/positions')
 		]);
 
@@ -36,13 +36,13 @@ export function useTransitions() {
 			pRes.json()
 		]);
 
-		setTransitions(tData);
+		setTechniques(tData);
 		setPositions(pData);
 	}
 
-	async function deleteTransition(id: string) {
-		if (!confirm('Delete this transition?')) return;
-		await fetch(`/api/transitions/${id}`, { method: 'DELETE' });
+	async function deleteTechnique(id: string) {
+		if (!confirm('Delete this technique?')) return;
+		await fetch(`/api/techniques/${id}`, { method: 'DELETE' });
 		await fetchAll();
 	}
 
@@ -51,9 +51,9 @@ export function useTransitions() {
 	}, []);
 
 	return {
-		transitions,
+		techniques,
 		positions,
 		fetchAll,
-		deleteTransition
+		deleteTechnique
 	};
 }

@@ -1,20 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { useTransitions, Transition, Position, Context } from './hooks/useTransitions';
-import { useTransitionForm } from './hooks/useTransitionForm';
+import { useTechniques, Technique, Position, Context } from './hooks/useTechniques';
+import { useTechniqueForm } from './hooks/useTechniqueForm';
 import { ACTORS, DISCIPLINES, DISCIPLINE_EFFECTIVENESS_LEVELS } from '@/lib/constants';
 
 type TableProps = {
-	transitions: Transition[];
+	techniques: Technique[];
 	selectedId: string | null;
-	onSelect: (t: Transition) => void;
+	onSelect: (t: Technique) => void;
 	onDelete: (id: string) => void;
 	positionLabel: (id: string) => string;
 };
 
-function TransitionsTable({
-	transitions, selectedId,
+function TechniquesTable({
+	techniques, selectedId,
 	onSelect, onDelete, positionLabel 
 }: TableProps) {
 	return (
@@ -31,7 +31,7 @@ function TransitionsTable({
 				</thead>
 
 				<tbody>
-					{transitions.map(t => (
+					{techniques.map(t => (
 						<tr
 							key={t.id}
 							onClick={() => onSelect(t)}
@@ -52,9 +52,9 @@ function TransitionsTable({
 						</tr>
 					))}
 
-					{transitions.length === 0 && (
+					{techniques.length === 0 && (
 						<tr>
-							<td colSpan={5} className="empty-state">no transitions yet</td>
+							<td colSpan={5} className="empty-state">no techniques yet</td>
 						</tr>
 					)}
 				</tbody>
@@ -64,7 +64,7 @@ function TransitionsTable({
 }
 
 type FormProps = {
-	selected: Transition | null;
+	selected: Technique | null;
 	positions: Position[];
 	contexts: { discipline: string; effectiveness: string; }[];
 	loading: boolean;
@@ -78,7 +78,7 @@ type FormProps = {
 	onCancel: () => void;
 };
 
-function TransitionForm({
+function TechniqueForm({
 	selected, positions, contexts, loading,
 	register, handleSubmit, submit, allDisciplinesUsed,
 	addContext, removeContext, updateContext, onCancel,
@@ -86,7 +86,7 @@ function TransitionForm({
 	return (
 		<div className="panel-form">
 			<div className="form-header">
-				<span className="form-title">{selected ? 'edit transition' : 'new transition'}</span>
+				<span className="form-title">{selected ? 'edit technique' : 'new technique'}</span>
 				{selected && (
 					<button className="btn btn-ghost" onClick={onCancel}>cancel</button>
 				)}
@@ -169,24 +169,24 @@ function TransitionForm({
 					disabled={loading}
 					style={{ width: '100%' }}
 				>
-					{loading ? 'saving...' : selected ? 'save changes' : 'create transition'}
+					{loading ? 'saving...' : selected ? 'save changes' : 'create technique'}
 				</button>
 			</form>
 		</div>
 	);
 }
 
-export default function TransitionsPage() {
-	const { transitions, positions, fetchAll, deleteTransition } = useTransitions();
-	const { register, handleSubmit, setValue, reset, contexts, addContext, removeContext, updateContext, loading, submit, allDisciplinesUsed } = useTransitionForm(fetchAll);
-	const [selected, setSelected] = useState<Transition | null>(null);
+export default function TechniquesPage() {
+	const { techniques, positions, fetchAll, deleteTechnique } = useTechniques();
+	const { register, handleSubmit, setValue, reset, contexts, addContext, removeContext, updateContext, loading, submit, allDisciplinesUsed } = useTechniqueForm(fetchAll);
+	const [selected, setSelected] = useState<Technique | null>(null);
 
 	function positionLabel(id: string) {
 		const p = positions.find(p => p.id === id);
 		return p ? `${p.name} (${p.perspective})` : id;
 	}
 
-	function selectTransition(t: Transition) {
+	function selectTechnique(t: Technique) {
 		setSelected(t);
 		setValue('name', t.name);
 		setValue('fromId', t.fromId);
@@ -202,14 +202,14 @@ export default function TransitionsPage() {
 
 	return (
 		<>
-			<TransitionsTable
-				transitions={transitions}
+			<TechniquesTable
+				techniques={techniques}
 				selectedId={selected?.id ?? null}
-				onSelect={selectTransition}
-				onDelete={deleteTransition}
+				onSelect={selectTechnique}
+				onDelete={deleteTechnique}
 				positionLabel={positionLabel}
 			/>
-			<TransitionForm
+			<TechniqueForm
 				selected={selected}
 				positions={positions}
 				contexts={contexts}

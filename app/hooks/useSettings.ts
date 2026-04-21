@@ -20,7 +20,7 @@ const DEFAULT_SETTINGS: ExploreSettings = {
 	defaultDisciplines: DISCIPLINES,
 	defaultPerspectives: PERSPECTIVES,
 	panelOpen: false,
-	visibleSlots: ['transitions_out', 'transitions_in', 'notes'],
+	visibleSlots: ['techniques_out', 'techniques_in', 'notes'],
 };
 
 const STORAGE_KEY = 'grappletree_explore_settings';

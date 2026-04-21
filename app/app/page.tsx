@@ -11,14 +11,14 @@ export default function LandingPage() {
 					<Link href="/explore" className="landing-card">
 						<div className="landing-card-title">Explore</div>
 						<div className="landing-card-desc">
-							Browse positions, transitions, and connections across disciplines
+							Browse positions, techniques, and connections across disciplines
 						</div>
 						<div className="landing-card-arrow">→</div>
 					</Link>
 					<Link href="/admin" className="landing-card landing-card-admin">
 						<div className="landing-card-title">Admin</div>
 						<div className="landing-card-desc">
-							Manage the database — positions, transitions, and contexts
+							Manage the database — positions, techniques, and contexts
 						</div>
 						<div className="landing-card-arrow">→</div>
 					</Link>

@@ -1,10 +1,10 @@
-import TransitionsOutSlot from './TransitionsOutSlot';
-import TransitionsInSlot from './TransitionsInSlot';
+import TechniquesOutSlot from './TechniquesOutSlot';
+import TechniquesInSlot from './TechniquesInSlot';
 import NotesSlot from './NotesSlot';
 
 export type SlotProps = {
 	position: any;
-	transitions: any[];
+	techniques: any[];
 };
 
 export type SlotConfig = {
@@ -14,7 +14,7 @@ export type SlotConfig = {
 };
 
 export const DETAIL_SLOTS: SlotConfig[] = [
-	{ id: 'transitions_out', label: 'Transitions out', component: TransitionsOutSlot },
-	{ id: 'transitions_in',  label: 'Transitions in',  component: TransitionsInSlot },
-	{ id: 'notes',           label: 'Notes',           component: NotesSlot },
+	{ id: 'techniques_out', label: 'Techniques out', component: TechniquesOutSlot },
+	{ id: 'techniques_in',  label: 'Techniques in',  component: TechniquesInSlot },
+	{ id: 'notes',          label: 'Notes',          component: NotesSlot },
 ];

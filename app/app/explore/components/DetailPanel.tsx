@@ -6,12 +6,12 @@ import { ExploreSettings } from '@/hooks/useSettings';
 
 type Props = {
 	position: any | null;
-	transitions: any[];
+	techniques: any[];
 	isOpen: boolean;
 	settings: ExploreSettings;
 };
 
-export default function DetailPanel({ position, transitions, isOpen, settings }: Props) {
+export default function DetailPanel({ position, techniques, isOpen, settings }: Props) {
 	const { collapsed, toggleSlot, visibleSlots } = useDetailPanel(settings);
 
 	return (
@@ -53,7 +53,7 @@ export default function DetailPanel({ position, transitions, isOpen, settings }:
 										</div>
 										{!isCollapsed && (
 											<div className="explore-slot-body">
-												<SlotComponent position={position} transitions={transitions} />
+												<SlotComponent position={position} techniques={techniques} />
 											</div>
 										)}
 									</div>

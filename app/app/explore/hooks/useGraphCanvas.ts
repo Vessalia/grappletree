@@ -57,12 +57,7 @@ export function useGraphCanvas({
 
 		const ro = new ResizeObserver(entries => {
 			const { width, height } = entries[0].contentRect;
-
-			setDimensions(prev =>
-				prev.width === width && prev.height === height
-					? prev
-					: { width, height }
-			);
+			setDimensions(prev => (prev.width === width && prev.height === height) ? prev : { width, height });
 		});
 
 		ro.observe(containerRef.current);
@@ -72,9 +67,7 @@ export function useGraphCanvas({
 
 	/* Build filtered graph */
 	useEffect(() => {
-		let filteredNodes = allNodes.filter(n =>
-			activePerspectives.has(n.perspective)
-		);
+		let filteredNodes = allNodes.filter(n => activePerspectives.has(n.perspective));
 
 		if (searchQuery && settings.searchMode === 'filter') {
 			const q = searchQuery.toLowerCase();
@@ -88,38 +81,22 @@ export function useGraphCanvas({
 			const neighborIds = new Set<string>();
 
 			allLinks.forEach(l => {
-				const srcId =
-					typeof l.source === 'object'
-						? (l.source as any).id
-						: l.source;
-
-				const tgtId =
-					typeof l.target === 'object'
-						? (l.target as any).id
-						: l.target;
+				const srcId = typeof l.source === 'object' ? (l.source as any).id : l.source;
+				const tgtId = typeof l.target === 'object' ? (l.target as any).id : l.target;
 
 				if (matchingIds.has(srcId)) neighborIds.add(tgtId);
 				if (matchingIds.has(tgtId)) neighborIds.add(srcId);
 			});
 
-			filteredNodes = filteredNodes.filter(
-				n => matchingIds.has(n.id) || neighborIds.has(n.id)
-			);
+			filteredNodes = filteredNodes.filter(n => matchingIds.has(n.id) || neighborIds.has(n.id));
 		}
 
 		const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
 
 		const filteredLinks = allLinks
 			.filter(l => {
-				const srcId =
-					typeof l.source === 'object'
-						? (l.source as any).id
-						: l.source;
-
-				const tgtId =
-					typeof l.target === 'object'
-						? (l.target as any).id
-						: l.target;
+				const srcId = typeof l.source === 'object' ? (l.source as any).id : l.source;
+				const tgtId = typeof l.target === 'object' ? (l.target as any).id : l.target;
 
 				return filteredNodeIds.has(srcId) && filteredNodeIds.has(tgtId);
 			})
@@ -174,19 +151,11 @@ export function useGraphCanvas({
 			const r = 5;
 
 			const isSelected = node.id === selectedNodeId;
+			const isMatch = searchQuery && node.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-			const isMatch =
-				searchQuery &&
-				node.name.toLowerCase().includes(searchQuery.toLowerCase());
+			let color = PERSPECTIVE_COLORS[node.perspective] ?? COLORS.nodeDefault;
 
-			let color =
-				PERSPECTIVE_COLORS[node.perspective] ?? COLORS.nodeDefault;
-
-			if (
-				searchQuery &&
-				settings.searchMode === 'highlight' &&
-				!isMatch
-			) {
+			if (searchQuery && settings.searchMode === 'highlight' && !isMatch) {
 				color = COLORS.nodeDimmed;
 			}
 

@@ -73,7 +73,7 @@ export default function ExplorePage() {
 				</div>
 				<DetailPanel
 					position={explore.selectedNode}
-					transitions={explore.transitions}
+					techniques={explore.techniques}
 					isOpen={explore.panelOpen}
 					settings={explore.settings}
 				/>

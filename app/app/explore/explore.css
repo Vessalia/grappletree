@@ -67,7 +67,7 @@
 	background: var(--ex-bg);
 	color: var(--ex-text-primary);
 	outline: none;
-	transition: border-color 0.1s;
+	technique: border-color 0.1s;
 }
 
 .explore-search-input:focus {
@@ -98,7 +98,7 @@
 	border: 1px solid var(--ex-border);
 	color: var(--ex-text-muted);
 	cursor: pointer;
-	transition: all 0.1s;
+	technique: all 0.1s;
 }
 
 .explore-filter-btn.active {
@@ -131,7 +131,7 @@
 	cursor: pointer;
 	color: var(--ex-text-secondary);
 	font-size: 14px;
-	transition: all 0.1s;
+	technique: all 0.1s;
 }
 
 .explore-icon-btn:hover {
@@ -166,7 +166,7 @@
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	transition: width 0.2s ease;
+	technique: width 0.2s ease;
 }
 
 .explore-panel.closed {
@@ -246,28 +246,28 @@
 	padding: 0 20px 16px;
 }
 
-.explore-transition-item {
+.explore-technique-item {
 	padding: 8px 0;
 	border-bottom: 1px solid var(--ex-border);
 	cursor: pointer;
-	transition: opacity 0.1s;
+	technique: opacity 0.1s;
 }
 
-.explore-transition-item:last-child {
+.explore-technique-item:last-child {
 	border-bottom: none;
 }
 
-.explore-transition-item:hover {
+.explore-technique-item:hover {
 	opacity: 0.7;
 }
 
-.explore-transition-name {
+.explore-technique-name {
 	font-size: 13px;
 	color: var(--ex-text-primary);
 	margin-bottom: 4px;
 }
 
-.explore-transition-meta {
+.explore-technique-meta {
 	display: flex;
 	align-items: center;
 	gap: 6px;
@@ -286,7 +286,7 @@
 	color: var(--ex-text-muted);
 }
 
-.explore-transition-position {
+.explore-technique-position {
 	font-size: 12px;
 	color: var(--ex-text-secondary);
 	font-family: 'IBM Plex Mono', monospace;
@@ -391,7 +391,7 @@
 	background: transparent;
 	color: var(--ex-text-muted);
 	cursor: pointer;
-	transition: all 0.1s;
+	technique: all 0.1s;
 }
 
 .settings-toggle-btn.active {
@@ -410,7 +410,7 @@
 	font-family: 'IBM Plex Mono', monospace;
 	color: var(--ex-text-muted);
 	cursor: pointer;
-	transition: all 0.1s;
+	technique: all 0.1s;
 	width: calc(100% - 40px);
 }
 

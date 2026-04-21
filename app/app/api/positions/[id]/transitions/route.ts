@@ -10,14 +10,14 @@ export async function GET(
 	try {
 		const result = await session.run(
 			`MATCH (p:Position {id: $id})
-			OPTIONAL MATCH (p)-[:TRANSITIONS_TO]->(t:Transition)-[:TRANSITIONS_TO]->(to:Position)
+			OPTIONAL MATCH (p)-[:STARTS]->(t:Technique)-[:RESULTS_IN]->(to:Position)
 			OPTIONAL MATCH (t)-[:HAS_CONTEXT]->(d:DisciplineContext)
 			WITH p, t, to, collect({discipline: d.discipline, effectiveness: d.effectiveness}) as contexts, 'out' as direction
 			WHERE t IS NOT NULL
 			RETURN t, to.id as relatedId, to.name as relatedName, to.perspective as relatedPerspective, contexts, direction
 			UNION
 			MATCH (p:Position {id: $id})
-			OPTIONAL MATCH (from:Position)-[:TRANSITIONS_TO]->(t:Transition)-[:TRANSITIONS_TO]->(p)
+			OPTIONAL MATCH (from:Position)-[:STARTS]->(t:Technique)-[:RESULTS_IN]->(p)
 			OPTIONAL MATCH (t)-[:HAS_CONTEXT]->(d:DisciplineContext)
 			WITH p, t, from, collect({discipline: d.discipline, effectiveness: d.effectiveness}) as contexts, 'in' as direction
 			WHERE t IS NOT NULL
@@ -25,7 +25,7 @@ export async function GET(
 			{ id }
 		);
 
-		const transitions = result.records.map(r => ({
+		const techniques = result.records.map(r => ({
 			...r.get('t').properties,
 			relatedId: r.get('relatedId'),
 			relatedName: r.get('relatedName'),
@@ -36,7 +36,7 @@ export async function GET(
 			direction: r.get('direction'),
 		}));
 
-		return NextResponse.json(transitions);
+		return NextResponse.json(techniques);
 	} finally {
 		await session.close();
 	}

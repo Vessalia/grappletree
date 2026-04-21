@@ -9,20 +9,20 @@ export async function GET(
 	const session = driver.session();
 	try {
 		const result = await session.run(
-			`MATCH (from:Position)-[:TRANSITIONS_TO]->(t:Transition {id: $id})-[:TRANSITIONS_TO]->(to:Position)
+			`MATCH (from:Position)-[:STARTS]->(t:Technique {id: $id})-[:RESULTS_IN]->(to:Position)
 			OPTIONAL MATCH (t)-[:HAS_CONTEXT]->(d:DisciplineContext)
 			RETURN t, from.id as fromId, to.id as toId,
 					collect({discipline: d.discipline, effectiveness: d.effectiveness}) as contexts`,
 			{ id }
 		);
 		const r = result.records[0];
-		const transition = {
+		const technique = {
 			...r.get('t').properties,
 			fromId: r.get('fromId'),
 			toId: r.get('toId'),
 			contexts: r.get('contexts'),
 		};
-		return NextResponse.json(transition);
+		return NextResponse.json(technique);
 	} finally {
 		await session.close();
 	}
@@ -37,26 +37,26 @@ export async function PATCH(
 	const session = driver.session();
 	try {
 		const result = await session.run(
-			`MATCH (t:Transition {id: $id})
+			`MATCH (t:Technique {id: $id})
 			SET t.name = $name, t.actor = $actor, t.notes = $notes
 			RETURN t`,
 			{ id, name, actor, notes: notes ?? '' }
 		);
-		const transition = result.records[0].get('t').properties;
+		const technique = result.records[0].get('t').properties;
 
 		if (contexts) {
 			await session.run(
-				'MATCH (t:Transition {id: $id})-[r:HAS_CONTEXT]->() DELETE r',
+				'MATCH (t:Technique {id: $id})-[r:HAS_CONTEXT]->() DELETE r',
 				{ id }
 			);
 			for (const ctx of contexts) {
 				if (!ctx.discipline || !ctx.effectiveness) continue;
 				await session.run(
-					`MATCH (t:Transition {id: $transitionId})
+					`MATCH (t:Technique {id: $techniqueId})
 					MATCH (d:DisciplineContext {discipline: $discipline, effectiveness: $effectiveness})
 					MERGE (t)-[:HAS_CONTEXT]->(d)`,
 					{
-						transitionId: id,
+						techniqueId: id,
 						discipline: ctx.discipline,
 						effectiveness: ctx.effectiveness,
 					}
@@ -64,7 +64,7 @@ export async function PATCH(
 			}
 		}
 
-		return NextResponse.json(transition);
+		return NextResponse.json(technique);
 	} finally {
 		await session.close();
 	}
@@ -78,7 +78,7 @@ export async function DELETE(
 	const session = driver.session();
 	try {
 		await session.run(
-			`MATCH (t:Transition {id: $id}) DETACH DELETE t`,
+			`MATCH (t:Technique {id: $id}) DETACH DELETE t`,
 			{ id }
 		);
 		return NextResponse.json({ success: true });

@@ -20,10 +20,10 @@ export function useGraphData() {
 		async function fetchGraph() {
 			const [pRes, tRes] = await Promise.all([
 				fetch('/api/positions'),
-				fetch('/api/transitions'),
+				fetch('/api/techniques'),
 			]);
 
-			const [positions, transitions] = await Promise.all([
+			const [positions, techniques] = await Promise.all([
 				pRes.json(),
 				tRes.json(),
 			]);
@@ -37,7 +37,7 @@ export function useGraphData() {
 			);
 
 			setAllLinks(
-				transitions.map((t: any) => ({
+				techniques.map((t: any) => ({
 					source: t.fromId,
 					target: t.toId,
 					name: t.name,

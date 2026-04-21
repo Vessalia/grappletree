@@ -12,7 +12,7 @@ export function useExplore() {
 	const [allNodes, setAllNodes] = useState<Node[]>([]);
 	const [allLinks, setAllLinks] = useState<Link[]>([]);
 	const [selectedNode, setSelectedNode] = useState<any | null>(null);
-	const [transitions, setTransitions] = useState<any[]>([]);
+	const [techniques, setTechniques] = useState<any[]>([]);
 	const [activePerspectives, setActivePerspectives] = useState<Set<string>>(new Set(PERSPECTIVES));
 	const [searchQuery, setSearchQuery] = useState('');
 	const [panelOpen, setPanelOpen] = useState(false);
@@ -28,11 +28,11 @@ export function useExplore() {
 		async function fetchGraph() {
 			const [pRes, tRes] = await Promise.all([
 				fetch('/api/positions'),
-				fetch('/api/transitions'),
+				fetch('/api/techniques'),
 			]);
-			const [positions, transitionData] = await Promise.all([pRes.json(), tRes.json()]);
+			const [positions, techniqueData] = await Promise.all([pRes.json(), tRes.json()]);
 			setAllNodes(positions.map((p: any) => ({ id: p.id, name: p.name, perspective: p.perspective })));
-			setAllLinks(transitionData.map((t: any) => ({ source: t.fromId, target: t.toId, name: t.name, actor: t.actor })));
+			setAllLinks(techniqueData.map((t: any) => ({ source: t.fromId, target: t.toId, name: t.name, actor: t.actor })));
 		}
 		fetchGraph();
 	}, []);
@@ -40,8 +40,8 @@ export function useExplore() {
 	async function handleNodeClick(node: any) {
 		setSelectedNode(node);
 		if (!panelOpen) setPanelOpen(true);
-		const res = await fetch(`/api/positions/${node.id}/transitions`);
-		setTransitions(await res.json());
+		const res = await fetch(`/api/positions/${node.id}/techniques`);
+		setTechniques(await res.json());
 	}
 
 	function togglePerspective(p: string) {
@@ -67,7 +67,7 @@ export function useExplore() {
 		allNodes,
 		allLinks,
 		selectedNode,
-		transitions,
+		techniques,
 		// filters
 		activePerspectives,
 		togglePerspective,
