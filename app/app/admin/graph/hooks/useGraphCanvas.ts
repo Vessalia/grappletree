@@ -48,8 +48,8 @@ export function useGraphCanvas(graphData: any) {
 					const lt = l.target?.id ?? l.target;
 					return `${ls}->${lt}` === reverse;
 				});
-				if (reverseLink) reverseLink.curvature = 0.2;
-				link.curvature = 0.2;
+				if (reverseLink) reverseLink.curvature = GRAPH_CONFIG.linkCurvature;
+				link.curvature = GRAPH_CONFIG.linkCurvature;
 			} else {
 				pairSet.add(forward);
 				link.curvature = 0;
