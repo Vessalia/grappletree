@@ -14,11 +14,12 @@ export type Context = {
 export type Technique = {
 	id: string;
 	name: string;
-	actor: string;
 	notes: string;
 	fromId: string;
 	toId: string;
-	contexts: Context[];
+	startActor: string;
+	resultActor: string;
+	contexts?: Context[];
 };
 
 export function useTechniques() {

@@ -7,7 +7,7 @@ export async function GET() {
 		const result = await session.run(
 			`MATCH (d:DisciplineContext)
 			RETURN d
-			ORDER BY d.discipline, d.effectiveness`
+			ORDER BY d.discipline`
 		);
 		const contexts = result.records.map(r => r.get('d').properties);
 		return NextResponse.json(contexts);

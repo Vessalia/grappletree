@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTechniques, Technique, Position, Context } from './hooks/useTechniques';
 import { useTechniqueForm } from './hooks/useTechniqueForm';
-import { ACTORS, DISCIPLINES, DISCIPLINE_EFFECTIVENESS_LEVELS } from '@/lib/constants';
+import { ACTORS, DISCIPLINES, EFFECTIVENESS_LABELS } from '@/lib/constants';
 
 type TableProps = {
 	techniques: Technique[];
@@ -25,7 +25,7 @@ function TechniquesTable({
 						<th>Name</th>
 						<th>From</th>
 						<th>To</th>
-						<th>Actor</th>
+						<th>Actors</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -40,7 +40,11 @@ function TechniquesTable({
 							<td className="cell-primary">{t.name}</td>
 							<td className="cell-secondary">{positionLabel(t.fromId)}</td>
 							<td className="cell-secondary">{positionLabel(t.toId)}</td>
-							<td><span className="badge">{t.actor}</span></td>
+							<td>
+								<span className="badge">
+									{t.startActor} → {t.resultActor}
+								</span>
+							</td>
 							<td style={{ textAlign: 'right' }}>
 								<button
 									className="btn btn-danger"
@@ -71,7 +75,6 @@ type FormProps = {
 	register: any;
 	handleSubmit: any;
 	submit: any;
-	allDisciplinesUsed: boolean;
 	addContext: () => void;
 	removeContext: (i: number) => void;
 	updateContext: (i: number, field: keyof Context, value: string) => void;
@@ -80,7 +83,7 @@ type FormProps = {
 
 function TechniqueForm({
 	selected, positions, contexts, loading,
-	register, handleSubmit, submit, allDisciplinesUsed,
+	register, handleSubmit, submit,
 	addContext, removeContext, updateContext, onCancel,
 }: FormProps) {
 	return (
@@ -105,8 +108,9 @@ function TechniqueForm({
 				<div className="form-section">
 					<label className="form-label">From</label>
 					<select className="form-select" {...register('fromId', { required: true })}>
+						<option value="">Select position</option>
 						{positions.map(p => (
-							<option key={p.id} value={p.id}>{p.name} ({p.perspective})</option>
+							<option key={p.id} value={p.id}>{p.name}</option>
 						))}
 					</select>
 				</div>
@@ -114,15 +118,23 @@ function TechniqueForm({
 				<div className="form-section">
 					<label className="form-label">To</label>
 					<select className="form-select" {...register('toId', { required: true })}>
+						<option value="">Select position</option>
 						{positions.map(p => (
-							<option key={p.id} value={p.id}>{p.name} ({p.perspective})</option>
+							<option key={p.id} value={p.id}>{p.name}</option>
 						))}
 					</select>
 				</div>
 
 				<div className="form-section">
-					<label className="form-label">Actor</label>
-					<select className="form-select" {...register('actor', { required: true })}>
+					<label className="form-label">Start Actor</label>
+					<select className="form-select" {...register('startActor', { required: true })}>
+						{ACTORS.map(a => <option key={a} value={a}>{a}</option>)}
+					</select>
+				</div>
+
+				<div className="form-section">
+					<label className="form-label">Result Actor</label>
+					<select className="form-select" {...register('resultActor', { required: true })}>
 						{ACTORS.map(a => <option key={a} value={a}>{a}</option>)}
 					</select>
 				</div>
@@ -134,7 +146,6 @@ function TechniqueForm({
 							type="button"
 							className="btn btn-ghost"
 							onClick={addContext}
-							disabled={allDisciplinesUsed}
 						>
 							+ add
 						</button>
@@ -155,7 +166,7 @@ function TechniqueForm({
 								value={ctx.effectiveness}
 								onChange={e => updateContext(i, 'effectiveness', e.target.value)}
 							>
-								{DISCIPLINE_EFFECTIVENESS_LEVELS.map(e => <option key={e} value={e}>{e}</option>)}
+								{EFFECTIVENESS_LABELS.map(e => <option key={e} value={e}>{e}</option>)}
 							</select>
 
 							<button type="button" className="btn btn-danger" onClick={() => removeContext(i)}>×</button>
@@ -178,12 +189,25 @@ function TechniqueForm({
 
 export default function TechniquesPage() {
 	const { techniques, positions, fetchAll, deleteTechnique } = useTechniques();
-	const { register, handleSubmit, setValue, reset, contexts, addContext, removeContext, updateContext, loading, submit, allDisciplinesUsed } = useTechniqueForm(fetchAll);
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		reset,
+		contexts,
+		setContexts,
+		addContext,
+		removeContext,
+		updateContext,
+		loading,
+		submit
+	} = useTechniqueForm(fetchAll);
+
 	const [selected, setSelected] = useState<Technique | null>(null);
 
 	function positionLabel(id: string) {
 		const p = positions.find(p => p.id === id);
-		return p ? `${p.name} (${p.perspective})` : id;
+		return p ? p.name : 'unknown';
 	}
 
 	function selectTechnique(t: Technique) {
@@ -191,13 +215,17 @@ export default function TechniquesPage() {
 		setValue('name', t.name);
 		setValue('fromId', t.fromId);
 		setValue('toId', t.toId);
-		setValue('actor', t.actor);
+		setValue('startActor', t.startActor);
+		setValue('resultActor', t.resultActor);
 		setValue('notes', t.notes);
+
+		setContexts(t.contexts ?? []);
 	}
 
 	function clearForm() {
 		setSelected(null);
 		reset();
+		setContexts([]);
 	}
 
 	return (
@@ -217,7 +245,6 @@ export default function TechniquesPage() {
 				register={register}
 				handleSubmit={handleSubmit}
 				submit={submit}
-				allDisciplinesUsed={allDisciplinesUsed}
 				addContext={addContext}
 				removeContext={removeContext}
 				updateContext={updateContext}

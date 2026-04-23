@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 type Position = {
 	id: string;
 	name: string;
-	perspective: string;
 	notes: string;
 };
 

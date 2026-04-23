@@ -16,20 +16,20 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-	const { name, perspective, notes } = await request.json();
+	const { name, notes } = await request.json();
 	const session = driver.session();
+
 	try {
 		const result = await session.run(
 			`CREATE (p:Position {
 				id: $id,
 				name: $name,
-				perspective: $perspective,
 				notes: $notes
 			}) RETURN p`,
-			{ id: uuidv4(), name, perspective, notes: notes ?? '' }
+			{ id: uuidv4(), name, notes: notes ?? '' }
 		);
-		const position = result.records[0].get('p').properties;
-		return NextResponse.json(position);
+
+		return NextResponse.json(result.records[0].get('p').properties);
 	} finally {
 		await session.close();
 	}

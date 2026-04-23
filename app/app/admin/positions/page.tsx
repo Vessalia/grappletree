@@ -1,13 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useWatch } from 'react-hook-form';
 import { usePositions } from './hooks/usePositions';
 import { usePositionForm } from './hooks/usePositionForm';
-import { useReciprocal } from './hooks/useReciprocal';
-import { PERSPECTIVES, OPPOSING_PERSPECTIVES } from '@/lib/constants';
 
-type Position = { id: string; name: string; perspective: string; notes: string; };
+type Position = { id: string; name: string; notes: string; };
 
 type TableProps = {
 	positions: Position[];
@@ -26,7 +23,6 @@ function PositionsTable({
 				<thead>
 					<tr>
 						<th>Name</th>
-						<th>Perspective</th>
 						<th></th>
 					</tr>
 				</thead>
@@ -39,9 +35,7 @@ function PositionsTable({
 							className={selectedId === p.id ? 'selected' : ''}
 						>
 							<td className="cell-primary">{p.name}</td>
-							<td className="cell-secondary">
-								<span className="badge">{p.perspective}</span>
-							</td>
+							<td className="cell-secondary">{p.notes}</td>
 							<td style={{ textAlign: 'right' }}>
 								<button
 									className="btn btn-danger"
@@ -66,21 +60,16 @@ function PositionsTable({
 
 type FormProps = {
 	selected: Position | null;
-	perspective: string;
-	createReciprocal: boolean;
-	isNeutral: boolean;
 	loading: boolean;
 	register: any;
 	handleSubmit: any;
 	submit: any;
-	setCreateReciprocal: (v: boolean) => void;
 	onCancel: () => void;
 };
 
 function PositionForm({
-	selected, perspective, createReciprocal, isNeutral,
-	loading, register, handleSubmit, submit,
-	setCreateReciprocal, onCancel,
+	selected, loading, register, handleSubmit, submit,
+	onCancel
 }: FormProps) {
 	return (
 		<div className="panel-form">
@@ -91,7 +80,7 @@ function PositionForm({
 				)}
 			</div>
 
-			<form onSubmit={handleSubmit((data: any) => submit(data, selected, createReciprocal))}>
+			<form onSubmit={handleSubmit((data: any) => submit(data, selected))}>
 				<div className="form-section">
 					<label className="form-label">Name</label>
 					<input
@@ -101,28 +90,6 @@ function PositionForm({
 					/>
 				</div>
 
-				<div className="form-section">
-					<label className="form-label">Perspective</label>
-					<select className="form-select" {...register('perspective', { required: true })}>
-						{PERSPECTIVES.map(p => (
-							<option key={p} value={p}>{p}</option>
-						))}
-					</select>
-				</div>
-
-				{!selected && (
-					<div className="form-section">
-						<label className={`checkbox-label ${isNeutral ? 'disabled' : ''}`}>
-							<input
-								type="checkbox"
-								checked={createReciprocal}
-								disabled={isNeutral}
-								onChange={e => setCreateReciprocal(e.target.checked)}
-							/>
-							also create &quot;{OPPOSING_PERSPECTIVES[perspective] ?? '—'}&quot; version
-						</label>
-					</div>
-				)}
 				<div className="form-section">
 					<label className="form-label">Notes</label>
 					<textarea
@@ -149,13 +116,10 @@ export default function PositionsPage() {
 	const { positions, fetchPositions, deletePosition } = usePositions();
 	const { register, handleSubmit, setValue, reset, control, loading, submit } = usePositionForm(fetchPositions);
 	const [selected, setSelected] = useState<Position | null>(null);
-	const perspective = useWatch({ control, name: 'perspective' });
-	const { createReciprocal, setCreateReciprocal, isNeutral } = useReciprocal(perspective);
 
 	function selectPosition(p: Position) {
 		setSelected(p);
 		setValue('name', p.name);
-		setValue('perspective', p.perspective);
 		setValue('notes', p.notes);
 	}
 
@@ -174,14 +138,10 @@ export default function PositionsPage() {
 			/>
 			<PositionForm
 				selected={selected}
-				perspective={perspective}
-				createReciprocal={createReciprocal}
-				isNeutral={isNeutral}
 				loading={loading}
 				register={register}
 				handleSubmit={handleSubmit}
 				submit={submit}
-				setCreateReciprocal={setCreateReciprocal}
 				onCancel={clearForm}
 			/>
 		</>

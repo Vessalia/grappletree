@@ -3,7 +3,6 @@ dotenv.config({ path: '.env.local' });
 
 import neo4j from 'neo4j-driver';
 import { v4 as uuidv4 } from 'uuid';
-import { DISCIPLINES, DISCIPLINE_EFFECTIVENESS_LEVELS } from '@/lib/constants';
 
 const driver = neo4j.driver(
 	process.env.NEO4J_URI as string,
@@ -14,18 +13,17 @@ const driver = neo4j.driver(
 );
 
 async function seed() {
+	const DISCIPLINES = ['bjj', 'mma', 'wrestling', 'judo'];
 	const session = driver.session();
 	try {
 		console.log('Seeding DisciplineContext nodes...');
 		for (const discipline of DISCIPLINES) {
-			for (const effectiveness of DISCIPLINE_EFFECTIVENESS_LEVELS) {
 			await session.run(
-				`MERGE (d:DisciplineContext {discipline: $discipline, effectiveness: $effectiveness})
+				`MERGE (d:DisciplineContext {discipline: $discipline})
 				ON CREATE SET d.id = $id`,
-				{ id: uuidv4(), discipline, effectiveness }
+				{ id: uuidv4(), discipline }
 			);
-			console.log(`  Created: ${discipline} / ${effectiveness}`);
-			}
+			console.log(`  Created: ${discipline} `);
 		}
 		console.log('Seed complete.');
 	} finally {

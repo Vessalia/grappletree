@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { PERSPECTIVE_COLORS } from '@/lib/constants';
 
 const COLORS = {
 	background: '#0a0a0a',
 	link: '#3a3a3a',
 	particle: '#f59e0b',
 	label: '#e8e8e8',
-	nodeDefault: '#888888',
+	nodeDefault: '#fdfdfd',
 };
 
 export const GRAPH_CONFIG = {
@@ -33,6 +32,7 @@ export function useGraphCanvas(graphData: any) {
 		height: 600,
 	});
 
+	// Resize handling
 	useEffect(() => {
 		if (!containerRef.current) return;
 
@@ -47,39 +47,41 @@ export function useGraphCanvas(graphData: any) {
 		});
 
 		ro.observe(containerRef.current);
-
 		return () => ro.disconnect();
 	}, []);
 
+	// Force tuning
 	useEffect(() => {
 		if (!fgRef.current) return;
 
-		fgRef.current.d3Force('link')?.distance(80);
-		fgRef.current.d3Force('charge')?.strength(-100);
+		fgRef.current.d3Force('link')?.distance(90);
+		fgRef.current.d3Force('charge')?.strength(-120);
 	}, []);
 
+	// Reheat simulation when data changes
 	useEffect(() => {
 		if (!fgRef.current) return;
-
 		fgRef.current.d3ReheatSimulation();
 	}, [graphData]);
 
+	// Optional: auto-fit once stabilized
 	const handleEngineStop = useCallback(() => {
-		// useful for zoomToFit if desired
+		if (!fgRef.current) return;
+		fgRef.current.zoomToFit(400);
 	}, []);
 
+	// Custom node rendering
 	const drawNode = useCallback(
 		(node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
 			const r = 5;
 
+			// node circle
 			ctx.beginPath();
 			ctx.arc(node.x, node.y, r, 0, 2 * Math.PI);
-
-			ctx.fillStyle =
-				PERSPECTIVE_COLORS[node.perspective] ?? COLORS.nodeDefault;
-
+			ctx.fillStyle = COLORS.nodeDefault; // ✅ critical fix
 			ctx.fill();
 
+			// label (zoom-sensitive)
 			if (globalScale > 1.5) {
 				const fontSize = Math.max(10 / globalScale, 4);
 

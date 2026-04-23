@@ -6,17 +6,18 @@ export async function PATCH(
 	{ params }: { params: Promise<{ id: string }> }
 ) {
 	const { id } = await params;
-	const { name, perspective, notes } = await request.json();
+	const { name, notes } = await request.json();
 	const session = driver.session();
+
 	try {
 		const result = await session.run(
 			`MATCH (p:Position {id: $id})
-			SET p.name = $name, p.perspective = $perspective, p.notes = $notes
+			SET p.name = $name, p.notes = $notes
 			RETURN p`,
-			{ id, name, perspective, notes: notes ?? '' }
+			{ id, name, notes: notes ?? '' }
 		);
-		const position = result.records[0].get('p').properties;
-		return NextResponse.json(position);
+
+		return NextResponse.json(result.records[0].get('p').properties);
 	} finally {
 		await session.close();
 	}

@@ -1,10 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { OPPOSING_PERSPECTIVES } from '@/lib/constants';
 
 type FormData = {
 	name: string;
-	perspective: string;
 	notes: string;
 };
 
@@ -19,15 +17,13 @@ export function usePositionForm(fetchPositions: () => Promise<void>) {
 	} = useForm<FormData>({
 		defaultValues: {
 			name: '',
-			perspective: 'neutral',
 			notes: ''
 		}
 	});
 
 	async function submit(
 		data: FormData,
-		selected: any,
-		createReciprocal: boolean
+		selected: any
 	) {
 		setLoading(true);
 		try {
@@ -43,21 +39,6 @@ export function usePositionForm(fetchPositions: () => Promise<void>) {
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify(data)
 				});
-
-				if (
-					createReciprocal &&
-					OPPOSING_PERSPECTIVES[data.perspective]
-				) {
-					await fetch('/api/positions', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({
-							name: data.name,
-							perspective: OPPOSING_PERSPECTIVES[data.perspective],
-							notes: data.notes
-						})
-					});
-				}
 			}
 
 			await fetchPositions();

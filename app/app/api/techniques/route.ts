@@ -1,25 +1,40 @@
 import { NextResponse } from 'next/server';
 import driver from '@/lib/neo4j';
 import { v4 as uuidv4 } from 'uuid';
+import { labelToEffectiveness, effectivenessToLabel } from '@/lib/utils';
 
 export async function GET() {
 	const session = driver.session();
 	try {
 		const result = await session.run(
-			`MATCH (from:Position)-[:STARTS]->(t:Technique)-[:RESULTS_IN]->(to:Position)
-			OPTIONAL MATCH (t)-[:HAS_CONTEXT]->(d:DisciplineContext)
-			RETURN t, from.id as fromId, to.id as toId,
-					collect({discipline: d.discipline, effectiveness: d.effectiveness}) as contexts
+			`MATCH (from:Position)-[s:STARTS]->(t:Technique)-[r:RESULTS_IN]->(to:Position)
+			OPTIONAL MATCH (t)-[hc:HAS_CONTEXT]->(d:DisciplineContext)
+			RETURN t,
+				from.id as fromId,
+				to.id as toId,
+				s.actor as startActor,
+				r.actor as resultActor,
+				collect({
+					discipline: d.discipline,
+					effectiveness: hc.effectiveness
+				}) as contexts
 			ORDER BY t.name`
 		);
+
 		const techniques = result.records.map(r => ({
 			...r.get('t').properties,
 			fromId: r.get('fromId'),
 			toId: r.get('toId'),
-			contexts: r.get('contexts').filter(
-				(c: any) => c.discipline != null && c.effectiveness != null
-			),
+			startActor: r.get('startActor'),
+			resultActor: r.get('resultActor'),
+			contexts: r.get('contexts')
+				.filter((c: any) => c.discipline != null && c.effectiveness != null)
+				.map((c: any) => ({
+					discipline: c.discipline,
+					effectiveness: effectivenessToLabel(c.effectiveness)
+				}))
 		}));
+
 		return NextResponse.json(techniques);
 	} finally {
 		await session.close();
@@ -27,34 +42,51 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-	const { fromId, toId, name, actor, notes, contexts } = await request.json();
+	const {
+		fromId,
+		toId,
+		name,
+		startActor,
+		resultActor,
+		notes,
+		contexts
+	} = await request.json();
+
 	const session = driver.session();
+
 	try {
-		const result = await session.run(
-			`MATCH (from:Position {id: $fromId}), (to:Position {id: $toId})
-			CREATE (from)-[:STARTS]->(t:Technique {
+		const id = uuidv4();
+
+		await session.run(
+			`MATCH (from:Position {id: $fromId})
+			MATCH (to:Position {id: $toId})
+			CREATE (t:Technique {
 				id: $id,
 				name: $name,
-				actor: $actor,
 				notes: $notes
-			})-[:RESULTS_IN]->(to)
-			RETURN t`,
-			{ fromId, toId, id: uuidv4(), name, actor, notes: notes ?? '' }
+			})
+			CREATE (from)-[:STARTS {actor: $startActor}]->(t)
+			CREATE (t)-[:RESULTS_IN {actor: $resultActor}]->(to)`,
+			{ id, fromId, toId, name, notes: notes ?? '', startActor, resultActor }
 		);
-		const technique = result.records[0].get('t').properties;
 
-		if (contexts && contexts.length > 0) {
+		if (contexts?.length) {
 			for (const ctx of contexts) {
-			await session.run(
-				`MATCH (t:Technique {id: $techniqueId})
-				MATCH (d:DisciplineContext {discipline: $discipline, effectiveness: $effectiveness})
-				MERGE (t)-[:HAS_CONTEXT]->(d)`,
-				{ techniqueId: technique.id, discipline: ctx.discipline, effectiveness: ctx.effectiveness }
-			);
+				await session.run(
+					`MATCH (t:Technique {id: $id})
+					MERGE (d:DisciplineContext {discipline: $discipline})
+					MERGE (t)-[hc:HAS_CONTEXT]->(d)
+					SET hc.effectiveness = $effectiveness`,
+					{
+						id,
+						discipline: ctx.discipline,
+						effectiveness: labelToEffectiveness(ctx.effectiveness)
+					}
+				);
 			}
 		}
 
-		return NextResponse.json(technique);
+		return NextResponse.json({ success: true, id });
 	} finally {
 		await session.close();
 	}

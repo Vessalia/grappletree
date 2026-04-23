@@ -1,20 +1,3 @@
-export const PERSPECTIVE_COLORS: Record<string, string> = {
-	top: '#f59e0b',
-	bottom: '#3b82f6',
-	attacker: '#ef4444',
-	defender: '#22c55e',
-	neutral: '#888888',
-};
-
-export const OPPOSING_PERSPECTIVES: Record<string, string> = {
-	top: 'bottom',
-	bottom: 'top',
-	attacker: 'defender',
-	defender: 'attacker',
-};
-
-export const PERSPECTIVES = Object.keys(PERSPECTIVE_COLORS);
-
 export const DISCIPLINE_COLORS: Record<string, string> = {
 	bjj: '#8b5cf6',
 	mma: '#ef4444',
@@ -23,6 +6,12 @@ export const DISCIPLINE_COLORS: Record<string, string> = {
 };
 
 export const DISCIPLINES = Object.keys(DISCIPLINE_COLORS);
-export const DISCIPLINE_EFFECTIVENESS_LEVELS = ['core', 'effective', 'situational', 'ineffective'];
+export const EFFECTIVENESS_LEVELS = [
+	{ label: 'core',        min: 0.75 },
+	{ label: 'effective',   min: 0.5 },
+	{ label: 'situational', min: 0.25 },
+	{ label: 'ineffective', min: 0.0 },
+];
+export const EFFECTIVENESS_LABELS = EFFECTIVENESS_LEVELS.map(l => l.label);
 
 export const ACTORS = ['attacker', 'defender', 'either'];
