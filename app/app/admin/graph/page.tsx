@@ -34,8 +34,9 @@ export default function GraphPage() {
 					ref={fgRef}
 					width={dimensions.width}
 					height={dimensions.height}
-					graphData={graphData}
 					{...GRAPH_CONFIG}
+					linkCurvature="curvature"
+					graphData={graphData}
 					linkColor={() => COLORS.link}
 					linkLabel={(link: any) =>
 						`${link.name} (${link.startActor} → ${link.resultActor})`

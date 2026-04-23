@@ -14,6 +14,7 @@ export const GRAPH_CONFIG = {
 	backgroundColor: COLORS.background,
 	nodeRelSize: 6,
 	linkWidth: 1.5,
+	linkCurvature: 0.2,
 	linkDirectionalArrowLength: 4,
 	linkDirectionalArrowRelPos: 1,
 	linkDirectionalParticles: 1,
@@ -31,6 +32,31 @@ export function useGraphCanvas(graphData: any) {
 		width: 800,
 		height: 600,
 	});
+
+	function assignCurvatures(links: any[]) {
+		const pairSet = new Set<string>();
+
+		for (const link of links) {
+			const src = link.source?.id ?? link.source;
+			const tgt = link.target?.id ?? link.target;
+			const forward = `${src}->${tgt}`;
+			const reverse = `${tgt}->${src}`;
+
+			if (pairSet.has(reverse)) {
+				const reverseLink = links.find(l => {
+					const ls = l.source?.id ?? l.source;
+					const lt = l.target?.id ?? l.target;
+					return `${ls}->${lt}` === reverse;
+				});
+				if (reverseLink) reverseLink.curvature = 0.2;
+				link.curvature = 0.2;
+			} else {
+				pairSet.add(forward);
+				link.curvature = 0;
+			}
+		}
+		return links;
+	}
 
 	// Resize handling
 	useEffect(() => {
@@ -61,6 +87,7 @@ export function useGraphCanvas(graphData: any) {
 	// Reheat simulation when data changes
 	useEffect(() => {
 		if (!fgRef.current) return;
+		assignCurvatures(graphData.links);
 		fgRef.current.d3ReheatSimulation();
 	}, [graphData]);
 
