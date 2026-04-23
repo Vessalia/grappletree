@@ -10,14 +10,14 @@ export async function GET(
 	try {
 		const result = await session.run(
 			`MATCH (p:Position {id: $id})
-			OPTIONAL MATCH (p)-[:STARTS]->(t:Technique)-[:RESULTS_IN]->(to:Position)
+			OPTIONAL MATCH (p)-[:TRANSITION_START]->(t:Technique)-[:TRANSITION_END]->(to:Position)
 			OPTIONAL MATCH (t)-[:HAS_CONTEXT]->(d:DisciplineContext)
 			WITH p, t, to, collect({discipline: d.discipline, effectiveness: d.effectiveness}) as contexts, 'out' as direction
 			WHERE t IS NOT NULL
 			RETURN t, to.id as relatedId, to.name as relatedName, to.perspective as relatedPerspective, contexts, direction
 			UNION
 			MATCH (p:Position {id: $id})
-			OPTIONAL MATCH (from:Position)-[:STARTS]->(t:Technique)-[:RESULTS_IN]->(p)
+			OPTIONAL MATCH (from:Position)-[:TRANSITION_START]->(t:Technique)-[:TRANSITION_END]->(p)
 			OPTIONAL MATCH (t)-[:HAS_CONTEXT]->(d:DisciplineContext)
 			WITH p, t, from, collect({discipline: d.discipline, effectiveness: d.effectiveness}) as contexts, 'in' as direction
 			WHERE t IS NOT NULL

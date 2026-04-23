@@ -11,7 +11,7 @@ export async function GET(
 
 	try {
 		const result = await session.run(
-			`MATCH (from:Position)-[s:STARTS]->(t:Technique {id: $id})-[r:RESULTS_IN]->(to:Position)
+			`MATCH (from:Position)-[s:TRANSITION_START]->(t:Technique {id: $id})-[r:TRANSITION_END]->(to:Position)
 			OPTIONAL MATCH (t)-[hc:HAS_CONTEXT]->(d:DisciplineContext)
 			RETURN t,
 				from.id as fromId,
@@ -68,8 +68,8 @@ export async function PATCH(
 		// remove old relationships
 		await session.run(
 			`MATCH (t:Technique {id: $id})
-			OPTIONAL MATCH (p1)-[s:STARTS]->(t)
-			OPTIONAL MATCH (t)-[r:RESULTS_IN]->(p2)
+			OPTIONAL MATCH (p1)-[s:TRANSITION_START]->(t)
+			OPTIONAL MATCH (t)-[r:TRANSITION_END]->(p2)
 			DELETE s, r`,
 			{ id }
 		);
@@ -79,8 +79,8 @@ export async function PATCH(
 			`MATCH (from:Position {id: $fromId})
 			MATCH (to:Position {id: $toId})
 			MATCH (t:Technique {id: $id})
-			CREATE (from)-[:STARTS {actor: $startActor}]->(t)
-			CREATE (t)-[:RESULTS_IN {actor: $resultActor}]->(to)`,
+			CREATE (from)-[:TRANSITION_START {actor: $startActor}]->(t)
+			CREATE (t)-[:TRANSITION_END {actor: $resultActor}]->(to)`,
 			{ id, fromId, toId, startActor, resultActor }
 		);
 

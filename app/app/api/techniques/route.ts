@@ -7,7 +7,7 @@ export async function GET() {
 	const session = driver.session();
 	try {
 		const result = await session.run(
-			`MATCH (from:Position)-[s:STARTS]->(t:Technique)-[r:RESULTS_IN]->(to:Position)
+			`MATCH (from:Position)-[s:TRANSITION_START]->(t:Technique)-[r:TRANSITION_END]->(to:Position)
 			OPTIONAL MATCH (t)-[hc:HAS_CONTEXT]->(d:DisciplineContext)
 			RETURN t,
 				from.id as fromId,
@@ -65,8 +65,8 @@ export async function POST(request: Request) {
 				name: $name,
 				notes: $notes
 			})
-			CREATE (from)-[:STARTS {actor: $startActor}]->(t)
-			CREATE (t)-[:RESULTS_IN {actor: $resultActor}]->(to)`,
+			CREATE (from)-[:TRANSITION_START {actor: $startActor}]->(t)
+			CREATE (t)-[:TRANSITION_END {actor: $resultActor}]->(to)`,
 			{ id, fromId, toId, name, notes: notes ?? '', startActor, resultActor }
 		);
 
