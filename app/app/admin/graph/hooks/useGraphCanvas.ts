@@ -105,7 +105,7 @@ export function useGraphCanvas(graphData: any) {
 			// node circle
 			ctx.beginPath();
 			ctx.arc(node.x, node.y, r, 0, 2 * Math.PI);
-			ctx.fillStyle = COLORS.nodeDefault; // ✅ critical fix
+			ctx.fillStyle = COLORS.nodeDefault;
 			ctx.fill();
 
 			// label (zoom-sensitive)
