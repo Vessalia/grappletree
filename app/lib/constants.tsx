@@ -14,4 +14,4 @@ export const EFFECTIVENESS_LEVELS = [
 ];
 export const EFFECTIVENESS_LABELS = EFFECTIVENESS_LEVELS.map(l => l.label);
 
-export const ACTORS = ['attacker', 'defender', 'either'];
+export const ACTORS = ['attacker', 'defender', 'either', 'bottom', 'top'];
