@@ -83,7 +83,6 @@ export function useTechniqueForm(fetchAll: () => Promise<void>) {
 
 			reset();
 			setContexts([]);
-
 		} finally {
 			setLoading(false);
 		}

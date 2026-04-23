@@ -16,10 +16,10 @@ async function seed() {
 	const DISCIPLINES = ['bjj', 'mma', 'wrestling', 'judo'];
 	const session = driver.session();
 	try {
-		console.log('Seeding DisciplineContext nodes...');
+		console.log('Seeding Discipline nodes...');
 		for (const discipline of DISCIPLINES) {
 			await session.run(
-				`MERGE (d:DisciplineContext {discipline: $discipline})
+				`MERGE (d:Discipline {name: $discipline})
 				ON CREATE SET d.id = $id`,
 				{ id: uuidv4(), discipline }
 			);

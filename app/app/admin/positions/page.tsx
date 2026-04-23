@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { usePositions } from './hooks/usePositions';
+import { usePositions, Position, Context } from './hooks/usePositions';
 import { usePositionForm } from './hooks/usePositionForm';
-
-type Position = { id: string; name: string; notes: string; };
+import { DISCIPLINES, EFFECTIVENESS_LABELS } from '@/lib/constants';
 
 type TableProps = {
 	positions: Position[];
@@ -60,16 +59,20 @@ function PositionsTable({
 
 type FormProps = {
 	selected: Position | null;
+	contexts: { discipline: string; effectiveness: string; }[];
 	loading: boolean;
 	register: any;
 	handleSubmit: any;
 	submit: any;
+	addContext: () => void;
+	removeContext: (i: number) => void;
+	updateContext: (i: number, field: keyof Context, value: string) => void;
 	onCancel: () => void;
 };
 
 function PositionForm({
-	selected, loading, register, handleSubmit, submit,
-	onCancel
+	selected, contexts, loading, register, handleSubmit, submit,
+	addContext, removeContext, updateContext, onCancel
 }: FormProps) {
 	return (
 		<div className="panel-form">
@@ -88,6 +91,41 @@ function PositionForm({
 						{...register('name', { required: true })}
 						placeholder="e.g. Mount"
 					/>
+				</div>
+
+				<div className="form-section">
+					<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+						<label className="form-label" style={{ margin: 0 }}>Discipline contexts</label>
+						<button
+							type="button"
+							className="btn btn-ghost"
+							onClick={addContext}
+						>
+							+ add
+						</button>
+					</div>
+
+					{contexts.map((ctx, i) => (
+						<div key={i} className="context-row">
+							<select
+								className="form-select"
+								value={ctx.discipline}
+								onChange={e => updateContext(i, 'discipline', e.target.value)}
+							>
+								{DISCIPLINES.map(d => <option key={d} value={d}>{d}</option>)}
+							</select>
+
+							<select
+								className="form-select"
+								value={ctx.effectiveness}
+								onChange={e => updateContext(i, 'effectiveness', e.target.value)}
+							>
+								{EFFECTIVENESS_LABELS.map(e => <option key={e} value={e}>{e}</option>)}
+							</select>
+
+							<button type="button" className="btn btn-danger" onClick={() => removeContext(i)}>×</button>
+						</div>
+					))}
 				</div>
 
 				<div className="form-section">
@@ -114,18 +152,34 @@ function PositionForm({
 
 export default function PositionsPage() {
 	const { positions, fetchPositions, deletePosition } = usePositions();
-	const { register, handleSubmit, setValue, reset, control, loading, submit } = usePositionForm(fetchPositions);
+	const {
+		register,
+		handleSubmit,
+		setValue,
+		reset,
+		control,
+		contexts,
+		setContexts,
+		addContext,
+		removeContext,
+		updateContext,
+		loading,
+		submit
+	} = usePositionForm(fetchPositions);
 	const [selected, setSelected] = useState<Position | null>(null);
 
 	function selectPosition(p: Position) {
 		setSelected(p);
 		setValue('name', p.name);
 		setValue('notes', p.notes);
+
+		setContexts(p.contexts ?? []);
 	}
 
 	function clearForm() {
 		setSelected(null);
 		reset();
+		setContexts([]);
 	}
 
 	return (
@@ -138,10 +192,14 @@ export default function PositionsPage() {
 			/>
 			<PositionForm
 				selected={selected}
+				contexts={contexts}
 				loading={loading}
 				register={register}
 				handleSubmit={handleSubmit}
 				submit={submit}
+				addContext={addContext}
+				removeContext={removeContext}
+				updateContext={updateContext}
 				onCancel={clearForm}
 			/>
 		</>

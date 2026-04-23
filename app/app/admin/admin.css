@@ -69,7 +69,7 @@
 	color: var(--text-secondary);
 	text-decoration: none;
 	font-size: 13px;
-	technique: all 0.1s;
+	transition: all 0.1s;
 	border-left: 2px solid transparent;
 }
 
@@ -158,7 +158,7 @@
 
 .data-table tr {
 	cursor: pointer;
-	technique: background 0.1s;
+	transition: background 0.1s;
 }
 
 .data-table tr:hover td { background: var(--bg-hover); }
@@ -207,7 +207,7 @@
 	border-radius: 4px;
 	font-size: 13px;
 	font-family: 'IBM Plex Sans', sans-serif;
-	technique: border-color 0.1s;
+	transition: border-color 0.1s;
 	outline: none;
 }
 
@@ -228,7 +228,7 @@
 	font-family: 'IBM Plex Mono', monospace;
 	cursor: pointer;
 	border: 1px solid transparent;
-	technique: all 0.1s;
+	transition: all 0.1s;
 }
 
 .btn-primary {
@@ -381,7 +381,7 @@
 	background: transparent;
 	border: 1px solid;
 	cursor: pointer;
-	technique: all 0.1s;
+	transition: all 0.1s;
 }
 
 .graph-filter-btn:hover {
@@ -394,6 +394,137 @@
 	font-size: 11px;
 	color: var(--text-muted);
 }
+
+.graph-toolbar-left {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+ 
+.graph-toolbar-controls {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-left: auto;
+	flex-shrink: 0;
+}
+ 
+/* ── filter pills ─────────────────────────────────────────────────────────── */
+ 
+.graph-filter-pills {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	flex-wrap: wrap;
+}
+ 
+.graph-filter-pill {
+	padding: 2px 9px;
+	border-radius: 3px;
+	border: 1px solid var(--border);
+	background: transparent;
+	color: var(--text-muted);
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 11px;
+	cursor: pointer;
+	transition: all 0.1s;
+	white-space: nowrap;
+}
+ 
+.graph-filter-pill:hover {
+	border-color: var(--border-bright);
+	color: var(--text-secondary);
+	background: var(--bg-hover);
+}
+ 
+/* Core 4 — slightly more prominent at rest */
+.graph-filter-pill--core {
+	border-color: var(--border-bright);
+	color: var(--text-secondary);
+}
+ 
+/* Extras — more muted at rest */
+.graph-filter-pill--extra {
+	border-color: var(--border);
+	color: var(--text-muted);
+}
+ 
+/* Active state — both groups use accent */
+.graph-filter-pill--active {
+	border-color: var(--accent-dim);
+	color: var(--accent);
+	background: rgba(245, 158, 11, 0.06);
+}
+ 
+.graph-filter-pill--active:hover {
+	border-color: var(--accent);
+	background: rgba(245, 158, 11, 0.1);
+}
+ 
+/* Divider between core and extra groups */
+.graph-filter-divider {
+	display: inline-block;
+	width: 1px;
+	height: 12px;
+	background: var(--border);
+	margin: 0 2px;
+	flex-shrink: 0;
+}
+ 
+/* Clear button */
+.graph-filter-clear {
+	padding: 2px 7px;
+	border-radius: 3px;
+	border: 1px solid transparent;
+	background: transparent;
+	color: var(--text-muted);
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 10px;
+	cursor: pointer;
+	transition: all 0.1s;
+}
+ 
+.graph-filter-clear:hover {
+	color: var(--text-primary);
+	border-color: var(--border);
+}
+ 
+/* ── OR/AND and dim/hide toggle groups ───────────────────────────────────── */
+ 
+.graph-toggle-group {
+	display: flex;
+	border: 1px solid var(--border);
+	border-radius: 3px;
+	overflow: hidden;
+}
+ 
+.graph-toggle {
+	padding: 2px 8px;
+	border: none;
+	background: transparent;
+	color: var(--text-muted);
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 10px;
+	cursor: pointer;
+	transition: all 0.1s;
+	white-space: nowrap;
+}
+ 
+.graph-toggle + .graph-toggle {
+	border-left: 1px solid var(--border);
+}
+ 
+.graph-toggle:hover {
+	color: var(--text-secondary);
+	background: var(--bg-hover);
+}
+ 
+.graph-toggle--active {
+	background: var(--bg-elevated);
+	color: var(--text-primary);
+}
+
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }

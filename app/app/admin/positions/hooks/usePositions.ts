@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
+import { Context } from '../../techniques/hooks/useTechniques';
+export type { Context } from '../../techniques/hooks/useTechniques';
 
-type Position = {
+export type Position = {
 	id: string;
 	name: string;
 	notes: string;
+	contexts?: Context[];
 };
 
 export function usePositions() {

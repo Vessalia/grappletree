@@ -12,14 +12,14 @@ export async function GET(
 	try {
 		const result = await session.run(
 			`MATCH (from:Position)-[s:TRANSITION_START]->(t:Technique {id: $id})-[r:TRANSITION_END]->(to:Position)
-			OPTIONAL MATCH (t)-[hc:HAS_CONTEXT]->(d:DisciplineContext)
+			OPTIONAL MATCH (t)-[hc:HAS_CONTEXT]->(d:Discipline)
 			RETURN t,
 				from.id as fromId,
 				to.id as toId,
 				s.actor as startActor,
 				r.actor as resultActor,
 				collect({
-					discipline: d.discipline,
+					discipline: d.name,
 					effectiveness: hc.effectiveness
 				}) as contexts`,
 			{ id }
@@ -94,7 +94,7 @@ export async function PATCH(
 			for (const ctx of contexts) {
 				await session.run(
 					`MATCH (t:Technique {id: $id})
-					MERGE (d:DisciplineContext {discipline: $discipline})
+					MERGE (d:Discipline {name: $discipline})
 					MERGE (t)-[hc:HAS_CONTEXT]->(d)
 					SET hc.effectiveness = $effectiveness`,
 					{

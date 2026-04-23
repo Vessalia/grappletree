@@ -5,7 +5,7 @@ export async function GET() {
 	const session = driver.session();
 	try {
 		const result = await session.run(
-			`MATCH (d:DisciplineContext)
+			`MATCH (d:Discipline)
 			RETURN d
 			ORDER BY d.discipline`
 		);

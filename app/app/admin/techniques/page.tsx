@@ -202,7 +202,6 @@ export default function TechniquesPage() {
 		loading,
 		submit
 	} = useTechniqueForm(fetchAll);
-
 	const [selected, setSelected] = useState<Technique | null>(null);
 
 	function positionLabel(id: string) {
