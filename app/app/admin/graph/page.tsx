@@ -20,6 +20,7 @@ export default function GraphPage() {
 		clearFilters,
 		setFilterMode,
 		setDisplayMode,
+		getContextColor,
 	} = useGraphFilters(graphData, contextNodes);
 
 	const {
@@ -30,10 +31,19 @@ export default function GraphPage() {
 		handleEngineStop,
 		getLinkColor,
 		getLinkParticleColor,
-		COLORS,
 	} = useGraphCanvas(graphData, visibleNodeIds, visibleLinkIds, displayMode);
 
 	const hasFilters = activeContextIds.size > 0;
+
+	const pillStyle = (id: string, name: string, active: boolean): React.CSSProperties => {
+		if (!active) return {};
+		const color = getContextColor(name);
+		return {
+			borderColor: color,
+			color,
+			background: `${color}12`,
+		};
+	};
 
 	return (
 		<div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -46,19 +56,24 @@ export default function GraphPage() {
 					</span>
 				</div>
 
+				<span className="graph-filter-divider" aria-hidden="true" />
+
 				{/* Center: context filter pills */}
 				<div className="graph-filter-pills">
 					{/* Core 4 */}
-					{coreContexts.map(ctx => (
-						<button
-							key={ctx.id}
-							className={`graph-filter-pill graph-filter-pill--core${activeContextIds.has(ctx.id) ? ' graph-filter-pill--active' : ''}`}
-							onClick={() => toggleContext(ctx.id)}
-							title={ctx.name}
-						>
-							{ctx.name}
-						</button>
-					))}
+					{coreContexts.map(ctx => {
+						const active = activeContextIds.has(ctx.id);
+						return (
+							<button
+								key={ctx.id}
+								className={`graph-filter-pill graph-filter-pill--core${active ? ' graph-filter-pill--active' : ''}`}
+								style={pillStyle(ctx.id, ctx.name, active)}
+								onClick={() => toggleContext(ctx.id)}
+							>
+								{ctx.name}
+							</button>
+						);
+					})}
 
 					{/* Divider — only shown when extra contexts exist */}
 					{extraContexts.length > 0 && (
@@ -66,16 +81,19 @@ export default function GraphPage() {
 					)}
 
 					{/* Extra contexts inferred from API */}
-					{extraContexts.map(ctx => (
-						<button
-							key={ctx.id}
-							className={`graph-filter-pill graph-filter-pill--extra${activeContextIds.has(ctx.id) ? ' graph-filter-pill--active' : ''}`}
-							onClick={() => toggleContext(ctx.id)}
-							title={ctx.name}
-						>
-							{ctx.name}
-						</button>
-					))}
+					{extraContexts.map(ctx => {
+						const active = activeContextIds.has(ctx.id);
+						return (
+							<button
+								key={ctx.id}
+								className={`graph-filter-pill graph-filter-pill--extra${active ? ' graph-filter-pill--active' : ''}`}
+								style={pillStyle(ctx.id, ctx.name, active)}
+								onClick={() => toggleContext(ctx.id)}
+							>
+								{ctx.name}
+							</button>
+						);
+					})}
 
 					{/* Clear */}
 					{hasFilters && (
@@ -91,7 +109,6 @@ export default function GraphPage() {
 
 				{/* Right: OR/AND + dim/hide toggles */}
 				<div className="graph-toolbar-controls">
-					{/* OR / AND */}
 					<div className="graph-toggle-group" role="group" aria-label="Filter mode">
 						<button
 							className={`graph-toggle${filterMode === 'OR' ? ' graph-toggle--active' : ''}`}
@@ -107,19 +124,16 @@ export default function GraphPage() {
 						</button>
 					</div>
 
-					{/* dim / hide */}
 					<div className="graph-toggle-group" role="group" aria-label="Display mode">
 						<button
 							className={`graph-toggle${displayMode === 'dim' ? ' graph-toggle--active' : ''}`}
 							onClick={() => setDisplayMode('dim')}
-							title="Dim filtered-out nodes"
 						>
 							dim
 						</button>
 						<button
 							className={`graph-toggle${displayMode === 'hide' ? ' graph-toggle--active' : ''}`}
 							onClick={() => setDisplayMode('hide')}
-							title="Hide filtered-out nodes"
 						>
 							hide
 						</button>

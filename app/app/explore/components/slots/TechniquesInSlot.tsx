@@ -20,7 +20,7 @@ export default function TechniquesInSlot({ techniques }: SlotProps) {
 						<span className="explore-context-badge">{t.actor}</span>
 						{t.contexts.map((ctx: any, i: number) => (
 							<span key={i} className="explore-context-badge">
-								{ctx.discipline} · {ctx.effectiveness}
+								{ctx.name} · {ctx.effectiveness}
 							</span>
 						))}
 					</div>

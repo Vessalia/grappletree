@@ -19,7 +19,8 @@ export async function GET(
 				s.actor as startActor,
 				r.actor as resultActor,
 				collect({
-					discipline: d.name,
+					id: d.id,
+					name: d.name,
 					effectiveness: hc.effectiveness
 				}) as contexts`,
 			{ id }
@@ -94,12 +95,12 @@ export async function PATCH(
 			for (const ctx of contexts) {
 				await session.run(
 					`MATCH (t:Technique {id: $id})
-					MERGE (d:Discipline {name: $discipline})
+					MERGE (d:Discipline {name: $name})
 					MERGE (t)-[hc:HAS_CONTEXT]->(d)
 					SET hc.effectiveness = $effectiveness`,
 					{
 						id,
-						discipline: ctx.discipline,
+						name: ctx.name,
 						effectiveness: labelToEffectiveness(ctx.effectiveness)
 					}
 				);

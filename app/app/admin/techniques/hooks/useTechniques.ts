@@ -7,7 +7,7 @@ export type Position = {
 };
 
 export type Context = {
-	discipline: string;
+	name: string;
 	effectiveness: string;
 };
 

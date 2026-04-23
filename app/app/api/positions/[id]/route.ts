@@ -14,7 +14,7 @@ export async function GET(
 			OPTIONAL MATCH (p)-[hc:HAS_CONTEXT]->(d:Discipline)
 			RETURN p,
 				collect({
-					discipline: d.name,
+					name: d.name,
 					effectiveness: hc.effectiveness
 				}) as contexts`,
 			{ id }
@@ -54,12 +54,12 @@ export async function PATCH(
 			for (const ctx of contexts) {
 				await session.run(
 					`MATCH (p:Position {id: $id})
-					MERGE (d:Discipline {name: $discipline})
+					MERGE (d:Discipline {name: $name})
 					MERGE (p)-[hc:HAS_CONTEXT]->(d)
 					SET hc.effectiveness = $effectiveness`,
 					{
 						id,
-						discipline: ctx.discipline,
+						name: ctx.name,
 						effectiveness: labelToEffectiveness(ctx.effectiveness)
 					}
 				);

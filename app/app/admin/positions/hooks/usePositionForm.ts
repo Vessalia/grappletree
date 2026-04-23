@@ -28,7 +28,7 @@ export function usePositionForm(fetchPositions: () => Promise<void>) {
 	function addContext() {
 		setContexts(prev => [
 			...prev,
-			{ discipline: DISCIPLINES[0], effectiveness: 'core' }
+			{ name: DISCIPLINES[0], effectiveness: 'core' }
 		]);
 	}
 

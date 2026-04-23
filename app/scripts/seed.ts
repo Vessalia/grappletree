@@ -23,7 +23,7 @@ async function seed() {
 				ON CREATE SET d.id = $id`,
 				{ id: uuidv4(), discipline }
 			);
-			console.log(`  Created: ${discipline} `);
+			console.log(` Created: ${discipline} `);
 		}
 		console.log('Seed complete.');
 	} finally {

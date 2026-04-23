@@ -11,7 +11,8 @@ export async function GET() {
 			OPTIONAL MATCH (p)-[hc:HAS_CONTEXT]->(d:Discipline)
 			RETURN p,
 				collect({
-					discipline: d.name,
+					id: d.id,
+					name: d.name,
 					effectiveness: hc.effectiveness
 				}) as contexts
 			 ORDER BY p.name`
@@ -20,12 +21,14 @@ export async function GET() {
 		const positions = result.records.map(r => ({
 			...r.get('p').properties,
 			contexts: r.get('contexts')
-				.filter((c: any) => c.discipline != null && c.effectiveness != null)
+				.filter((c: any) => c.name != null && c.effectiveness != null)
 				.map((c: any) => ({
-					discipline: c.discipline,
+					id: c.id,
+					name: c.name,
 					effectiveness: effectivenessToLabel(c.effectiveness)
 				}))
 		}));
+
 		return NextResponse.json(positions);
 	} finally {
 		await session.close();
@@ -51,13 +54,13 @@ export async function POST(request: Request) {
 		if (contexts?.length) {
 			for (const ctx of contexts) {
 				await session.run(
-					`MATCH (t:Technique {id: $id})
-					MERGE (d:Discipline {name: $discipline})
-					MERGE (t)-[hc:HAS_CONTEXT]->(d)
+					`MATCH (p:Position {id: $id})
+					MERGE (d:Discipline {name: $name})
+					MERGE (p)-[hc:HAS_CONTEXT]->(d)
 					SET hc.effectiveness = $effectiveness`,
 					{
 						uuid,
-						discipline: ctx.discipline,
+						name: ctx.name,
 						effectiveness: labelToEffectiveness(ctx.effectiveness)
 					}
 				);

@@ -16,9 +16,9 @@ export function labelToEffectiveness(label: string): number {
 	if (idx === -1) return 0;
 
 	const current = EFFECTIVENESS_LEVELS[idx];
-	const next = EFFECTIVENESS_LEVELS[idx + 1];
+	const next = EFFECTIVENESS_LEVELS[idx - 1];
 
-	if (!next) return 0; // bottom bucket
+	if (!next) return 1; // top bucket
 
 	return (current.min + next.min) / 2;
 }

@@ -59,7 +59,7 @@ function PositionsTable({
 
 type FormProps = {
 	selected: Position | null;
-	contexts: { discipline: string; effectiveness: string; }[];
+	contexts: { name: string; effectiveness: string; }[];
 	loading: boolean;
 	register: any;
 	handleSubmit: any;
@@ -109,8 +109,8 @@ function PositionForm({
 						<div key={i} className="context-row">
 							<select
 								className="form-select"
-								value={ctx.discipline}
-								onChange={e => updateContext(i, 'discipline', e.target.value)}
+								value={ctx.name}
+								onChange={e => updateContext(i, 'name', e.target.value)}
 							>
 								{DISCIPLINES.map(d => <option key={d} value={d}>{d}</option>)}
 							</select>

@@ -12,14 +12,14 @@ export async function GET(
 			`MATCH (p:Position {id: $id})
 			OPTIONAL MATCH (p)-[:TRANSITION_START]->(t:Technique)-[:TRANSITION_END]->(to:Position)
 			OPTIONAL MATCH (t)-[:HAS_CONTEXT]->(d:Discipline)
-			WITH p, t, to, collect({discipline: d.name, effectiveness: d.effectiveness}) as contexts, 'out' as direction
+			WITH p, t, to, collect({name: d.name, effectiveness: d.effectiveness}) as contexts, 'out' as direction
 			WHERE t IS NOT NULL
 			RETURN t, to.id as relatedId, to.name as relatedName, to.perspective as relatedPerspective, contexts, direction
 			UNION
 			MATCH (p:Position {id: $id})
 			OPTIONAL MATCH (from:Position)-[:TRANSITION_START]->(t:Technique)-[:TRANSITION_END]->(p)
 			OPTIONAL MATCH (t)-[:HAS_CONTEXT]->(d:Discipline)
-			WITH p, t, from, collect({discipline: d.name, effectiveness: d.effectiveness}) as contexts, 'in' as direction
+			WITH p, t, from, collect({name: d.name, effectiveness: d.effectiveness}) as contexts, 'in' as direction
 			WHERE t IS NOT NULL
 			RETURN t, from.id as relatedId, from.name as relatedName, from.perspective as relatedPerspective, contexts, direction`,
 			{ id }
@@ -31,7 +31,7 @@ export async function GET(
 			relatedName: r.get('relatedName'),
 			relatedPerspective: r.get('relatedPerspective'),
 			contexts: r.get('contexts').filter(
-				(c: any) => c.discipline != null && c.effectiveness != null
+				(c: any) => c.name != null && c.effectiveness != null
 			),
 			direction: r.get('direction'),
 		}));

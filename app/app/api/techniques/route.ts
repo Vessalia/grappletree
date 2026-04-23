@@ -15,7 +15,8 @@ export async function GET() {
 				s.actor as startActor,
 				r.actor as resultActor,
 				collect({
-					discipline: d.name,
+					id: d.id,
+					name: d.name,
 					effectiveness: hc.effectiveness
 				}) as contexts
 			ORDER BY t.name`
@@ -28,9 +29,10 @@ export async function GET() {
 			startActor: r.get('startActor'),
 			resultActor: r.get('resultActor'),
 			contexts: r.get('contexts')
-				.filter((c: any) => c.discipline != null && c.effectiveness != null)
+				.filter((c: any) => c.name != null && c.effectiveness != null)
 				.map((c: any) => ({
-					discipline: c.discipline,
+					id: c.id,
+					name: c.name,
 					effectiveness: effectivenessToLabel(c.effectiveness)
 				}))
 		}));
@@ -74,12 +76,12 @@ export async function POST(request: Request) {
 			for (const ctx of contexts) {
 				await session.run(
 					`MATCH (t:Technique {id: $id})
-					MERGE (d:Discipline {name: $discipline})
+					MERGE (d:Discipline {name: $name})
 					MERGE (t)-[hc:HAS_CONTEXT]->(d)
 					SET hc.effectiveness = $effectiveness`,
 					{
 						id,
-						discipline: ctx.discipline,
+						name: ctx.name,
 						effectiveness: labelToEffectiveness(ctx.effectiveness)
 					}
 				);

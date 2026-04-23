@@ -1,13 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-export type Node = { id: string; name: string };
+export type Node = { id: string; name: string; contextIds: string[] };
 export type Link = {
 	source: string;
 	target: string;
 	name: string;
 	startActor: string;
 	resultActor: string;
+	contextIds: string[];
 };
 export type ContextNode = { id: string; name: string };
 
@@ -34,17 +35,25 @@ export function useGraphData() {
 			const nodes: Node[] = positions.map((p: any) => ({
 				id: p.id,
 				name: p.name,
+				contextIds: (p.contexts ?? [])
+					.filter((c: any) => c.name != null)
+					.map((c: any) => c.id),
 			}));
+
 			const links: Link[] = techniques.map((t: any) => ({
 				source: t.fromId,
 				target: t.toId,
 				name: t.name,
 				startActor: t.startActor,
 				resultActor: t.resultActor,
+				contextIds: (t.contexts ?? [])
+					.filter((c: any) => c.name != null)
+					.map((c: any) => c.id),
 			}));
+
 			const ctxNodes: ContextNode[] = contexts.map((c: any) => ({
 				id: c.id,
-				name: c.discipline,
+				name: c.name,
 			}));
 
 			setGraphData({ nodes, links });
